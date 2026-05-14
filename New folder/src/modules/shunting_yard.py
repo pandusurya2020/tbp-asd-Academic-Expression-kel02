@@ -9,4 +9,8 @@ output: List[str] = []
 op_stack = Stack()
 # TODO: implementasikan Shunting-Yard Algorithm
 # Gunakan PREC, RASSOC, FUNCS untuk panduan
+PREC = {'+': 2, '-': 2, '*': 3, '/': 3, '^': 4}
+RASSOC = {'^'} # right-associative operators
+FUNCS = {'sin': math.sin, 'cos': math.cos, 'sqrt': math.sqrt,
+'log': math.log, 'abs': abs}
 return output
