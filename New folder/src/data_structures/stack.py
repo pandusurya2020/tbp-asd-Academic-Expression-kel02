@@ -1,4 +1,4 @@
- Shunting-Yard Algorithm Dijkstra (1961)
+# Shunting-Yard Algorithm Dijkstra (1961)
 # Mengkonversi ekspresi infix → postfix menggunakan Stack.
 # Kompleksitas: O(n) waktu, O(n) ruang.
 #
@@ -67,4 +67,3 @@ class Stack:
     
     def is_empty(self) -> bool:
         return self._size == 0
-    
