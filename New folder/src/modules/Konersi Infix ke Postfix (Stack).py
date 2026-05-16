@@ -1,18 +1,19 @@
 import sys
 import os
 
+# Sinkronisasi path agar Python mendeteksi folder data_structures
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from data_structures.stack import Stack
 
-# Aturan kekuatan operator matematika
+# Tingkat kekuatan hirarki operator matematika
 PREC = {'+': 2, '-': 2, '*': 3, '/': 3, '^': 4}
-RASSOC = {'^'}  # Pangkat dikerjakan dari kanan
+RASSOC = {'^'}  # Pangkat dikerjakan dari kanan ke kiri
 
 def infix_to_postfix(tokens: list) -> list:
-    """Mengubah rumus infix menjadi postfix menggunakan Stack."""
+    """Mengubah potongan token infix menjadi postfix menggunakan Stack (O(n))."""
     output = []
-    op_stack = Stack()  # Memanggil Stack berbasis Linked List yang kamu buat tadi
+    op_stack = Stack()
 
     for tok in tokens:
         if tok.isalnum() and tok not in PREC:
@@ -22,7 +23,7 @@ def infix_to_postfix(tokens: list) -> list:
         elif tok == ')':
             while not op_stack.is_empty() and op_stack.peek() != '(':
                 output.append(op_stack.pop())
-            op_stack.pop()  # Buang kurung buka '('
+            op_stack.pop()  # Membuang tanda kurung buka '('
         elif tok in PREC:
             while (not op_stack.is_empty() and op_stack.peek() != '(' and
                    (PREC[op_stack.peek()] > PREC[tok] or 
