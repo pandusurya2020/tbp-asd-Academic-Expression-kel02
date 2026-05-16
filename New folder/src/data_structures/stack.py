@@ -1,7 +1,7 @@
-from typing import Optional, Any
+from typing import Any, Optional
 
 class LLNode:
-    """Simpul untuk menyimpan data dan pointer ke simpul berikutnya."""
+    """Wadah Simpul (Node) untuk menyimpan data dan pointer ke node selanjutnya."""
     def __init__(self, data: Any = None):
         self.data: Any = data
         self.next: Optional['LLNode'] = None
@@ -13,56 +13,59 @@ class Stack:
         self._size: int = 0
 
     def push(self, data: Any) -> None:
-        """Menambahkan data baru ke tumpukan teratas. Kompleksitas: O(1)"""
+        """Menambahkan data baru ke tumpukan teratas (O(1))."""
         new_node = LLNode(data)
         new_node.next = self.top
         self.top = new_node
         self._size += 1
 
     def pop(self) -> Any:
-        """Mengambil dan menghapus data teratas. Kompleksitas: O(1)"""
-        if self.is_empty():
+        """Mengambil dan menghapus data teratas (O(1))."""
+        # Ganti dari 'if self.is_empty():' menjadi langsung cek None
+        if self.top is None:
             return None
+        
+        # Sekarang Pylance tahu pasti self.top di bawah ini TIDAK None (Aman)
         popped_data = self.top.data
         self.top = self.top.next
         self._size -= 1
         return popped_data
 
     def peek(self) -> Any:
-        """Melihat data teratas tanpa menghapusnya. Kompleksitas: O(1)"""
-        if self.is_empty():
+        """Mengintip data teratas tanpa menghapusnya (O(1))."""
+        # Ganti dari 'if self.is_empty():' menjadi langsung cek None
+        if self.top is None:
             return None
+            
         return self.top.data
 
     def is_empty(self) -> bool:
-        """Mengecek apakah tumpukan kosong."""
+        """Memeriksa apakah tumpukan kosong."""
         return self._size == 0
-    
+
+    def __len__(self) -> int:
+        """Mengembalikan jumlah elemen di dalam stack."""
+        return self._size
+
 # =======================================================
 # KODE DI BAWAH INI UNTUK MENJALANKAN STACK SECARA MANDIRI
 # =======================================================
 if __name__ == "__main__":
     print("=== UJI COBA MANDIRI STRUKTUR DATA STACK ===")
-    
-    # 1. Membuat objek stack baru
     tumpukan = Stack()
-    print(f"Apakah tumpukan kosong? {tumpukan.is_empty()}") # Harus True
+    print(f"Apakah tumpukan kosong? {tumpukan.is_empty()}") 
     
-    # 2. Mencoba memasukkan data (Push)
     print("\n-> Memasukkan data: 'Buku A', 'Buku B', 'Buku C'")
     tumpukan.push("Buku A")
     tumpukan.push("Buku B")
     tumpukan.push("Buku C")
     
-    # 3. Mengintip data teratas (Peek)
-    print(f"Buku paling atas (Peek): {tumpukan.peek()}") # Harus Buku C
+    print(f"Buku paling atas (Peek): {tumpukan.peek()}") 
     
-    # 4. Mengambil data teratas (Pop)
     print("\n-> Mengambil data teratas (Pop):")
-    print(f"Diambil: {tumpukan.pop()}") # Harus Buku C
-    print(f"Diambil: {tumpukan.pop()}") # Harus Buku B
+    print(f"Diambil: {tumpukan.pop()}") 
+    print(f"Diambil: {tumpukan.pop()}") 
     
-    # 5. Cek kondisi akhir
-    print(f"\nBuku paling atas sekarang: {tumpukan.peek()}") # Harus Buku A
-    print(f"Apakah tumpukan kosong? {tumpukan.is_empty()}") # Harus False
+    print(f"\nBuku paling atas sekarang: {tumpukan.peek()}") 
+    print(f"Apakah tumpukan kosong? {tumpukan.is_empty()}") 
     print("============================================")
