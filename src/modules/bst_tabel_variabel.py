@@ -1,4 +1,9 @@
 # =================================================================
+# BAGIAN 0: IMPOR MODUL (WAJIB DI PALING ATAS FILE)
+# =================================================================
+from typing import Optional, List, Tuple
+
+# =================================================================
 # BAGIAN 1: STRUKTUR DATA MURNI (Wajib implementasi dari nol)
 # Sesuai referensi Goodrich dkk. dan Panduan TBP [Source 1, 2]
 # =================================================================
@@ -107,8 +112,9 @@ class VarBST:
             res.append((p.key, p.val))
             self._inorder(p.right, res)
 
+
 # =================================================================
-# BAGIAN 2: MODUL APLIKASI (INTERFANCE CLI)
+# BAGIAN 2: MODUL APLIKASI (INTERFACE CLI)
 # Syarat Skor 4: Interaktif & Menampilkan Analisis Big-O [1, 9]
 # =================================================================
 
@@ -131,16 +137,16 @@ def main():
                 continue
             
             parts = line.split()
-            cmd = parts.upper() # Perintah bersifat case-insensitive
+            cmd = parts[0].upper() # PERBAIKAN: mengambil elemen pertama list lalu di-upper
 
             if cmd == "SET" and len(parts) == 3:
-                var, val = parts[10], float(parts[11])
+                var, val = parts[1], float(parts[2]) # PERBAIKAN: Perubahan indeks ke 1 dan 2
                 bst.set(var, val)
                 print(f"Hasil: OK [{var} = {val}]")
                 print("Analisis Big-O: Operasi INSERT/UPDATE BST - Kompleksitas: Rata-rata O(log n)")
 
             elif cmd == "GET" and len(parts) == 2:
-                var = parts[10]
+                var = parts[1] # PERBAIKAN: Perubahan indeks ke 1
                 res = bst.get(var)
                 if res is not None:
                     print(f"Hasil: {var} = {res}")
@@ -149,7 +155,7 @@ def main():
                 print("Analisis Big-O: Operasi SEARCH BST - Kompleksitas: Rata-rata O(log n)")
 
             elif cmd == "DELETE" and len(parts) == 2:
-                var = parts[10]
+                var = parts[1] # PERBAIKAN: Perubahan indeks ke 1
                 bst.delete(var)
                 print(f"Hasil: Perintah hapus untuk '{var}' berhasil dieksekusi.")
                 print("Analisis Big-O: Operasi DELETE BST - Kompleksitas: Rata-rata O(log n)")
