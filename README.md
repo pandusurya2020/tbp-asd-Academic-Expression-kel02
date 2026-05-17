@@ -10,11 +10,11 @@ Proyek ini disusun untuk memenuhi Tugas Besar mata kuliah *Struktur Data dan Alg
 
 | Nama Anggota | NIM | Fokus Komponen / Modul |
 | :--- | :---: | :--- |
-| *Pandu Surya Pratama* | 25051030005| g |
-| *Gifara Hanifa Hermawan * | 25051030016| gg |
-| *Ditha Bapra Nugraha Br Payung* | 25051030023| ggg |
-| *Nagita Calya* | 25051030030| ggg |
-| *Dominicus Savio F. W. P.* | 25051030040| gggn |
+| *Pandu Surya Pratama* | 25051030005| Expression Tree |
+| *Gifara Hanifa Hermawan * | 25051030016| Stack, Konversi Infix ke Postfix, Evaluasi Postfix |
+| *Ditha Bapra Nugraha Br Payung* | 25051030023| Queue, Graph Dependensi Formula |
+| *Nagita Calya* | 25051030030| Linked List, Evaluasi Postfix |
+| *Dominicus Savio F. W. P.* | 25051030040| BST, Tabel Variabel |
 
 
 ---
@@ -32,3 +32,32 @@ Aplikasi ini menggunakan *Arsitektur Aliran Data Modular* (Pipe-and-Filter Style
 ---
 
 ## 📂 Struktur Direktori Proyek
+```text
+tbp-asd-Academic-Expression-kel02/
+│
+├── src/
+│   ├── main.py                     # Pusat Komando Utama Menu Aplikasi
+│   │
+│   ├── data_structures/            # Fondasi Struktur Data Murni (Low-Level)
+│   │   ├── linked_list.py          # Singly Linked List
+│   │   ├── stack.py                # Stack (Linked-List Based)
+│   │   ├── bst.py                  # Binary Search Tree (Template Node)
+│   │   └── graph.py                # Adjacency List Graph Structure (DAG)
+│   │
+│   └── modules/                    # Implementasi Logika Aplikasi (High-Level)
+│       ├── cli_kalkulator.py       # Loop Antarmuka & Simulasi Log Stack
+│       ├── konversi_infix_ke_postfix.py
+│       ├── evaluasi_postfix.py
+│       ├── expression_tree.py
+│       └── graph_dependensi_formula.py
+│
+├── tests/                          # Unit Testing Komponen Proyek
+│   ├── test_linked_list.py
+│   ├── test_stack.py
+│   ├── test_bst.py
+│   └── test_graph.py
+│
+├── docs/                           # Dokumentasi & Laporan Final
+│   └── laporan_final_calculator.pdf
+│
+└── README.md                       # Panduan Utama Proyek (File Ini)
