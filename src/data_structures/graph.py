@@ -1,88 +1,92 @@
-class FormulaDAG:
-    def __init__(self):
-        # self.adj: Map yang memetakan prerequisite ke daftar formula yang membutuhkannya
-        # A -> B artinya A harus dievaluasi sebelum B (B tergantung pada A)
-        self.adj = {} 
-        self.formulas = {}   # nama_formula -> ekspresi_string
-        self._all_nodes = set() # Menyimpan semua node unik
-
-    def define(self, nama: str, ekspresi: str, deps: list):
-        """
-        Menambahkan formula baru dan relasi dependensinya.
-        Big-O: O(1) amortized per penambahan edge [3].
-        """
-        self.formulas[nama] = ekspresi
-        self._all_nodes.add(nama)
+class Graph:
+    def _init_(self):
+        # Menggunakan representasi Adjacency List (Daftar Keterkaitan)
+        # Contoh struktur: { 'F1': ['F2', 'F3'], 'F2': ['F3', 'F4'] }
+        self.adj_list = {}
         
-        if nama not in self.adj:
-            self.adj[nama] = []
-        
-        # Jika formula 'nama' bergantung pada daftar 'deps'
-        # Maka buat edge: dep -> nama (dep diproses duluan)
-        for dep in deps:
-            self._all_nodes.add(dep)
-            if dep not in self.adj:
-                self.adj[dep] = []
-            self.adj[dep].append(nama)
-
-    def topological_sort(self) -> list:
-        """
-        Mengembalikan list urutan evaluasi menggunakan algoritma Kahn.
-        Mendeteksi siklus jika hasil tidak mencakup semua node.
-        Big-O: O(V + E) [2, 4].
-        """
-        topo = []      # List hasil urutan
-        incount = {node: 0 for node in self._all_nodes} # Map in-degree [5]
-
-        # 1. Hitung in-degree (jumlah hambatan/prasyarat) tiap node
-        for u in self.adj:
-            for v in self.adj[u]:
-                incount[v] += 1
-
-        # 2. Masukkan semua node dengan in-degree 0 ke 'ready' list [1]
-        # Node in-degree 0 adalah node yang tidak punya prasyarat (siap dihitung)
-        ready = [node for node in self._all_nodes if incount[node] == 0]
-
-        # 3. Proses 'ready' list (Kahn's Algorithm)
-        while len(ready) > 0:
-            u = ready.pop()    # Ambil formula yang tidak punya prasyarat lagi
-            topo.append(u)
+    def tambah_simpul(self, v):
+        """Menambahkan simpul (vertex/nama fungsi formula) baru ke dalam graf jika belum ada."""
+        if v not in self.adj_list:
+            self.adj_list[v] = []
             
-            for v in self.adj[u]: 
-                incount[v] -= 1 # Satu prasyarat (u) sudah selesai
-                if incount[v] == 0:
-                    ready.append(v)
-
-        # 4. Deteksi Siklus (Circular Dependency) [6, 7]
-        if len(topo) < len(self._all_nodes):
-            raise ValueError("Siklus terdeteksi! Formula tidak valid (Circular Dependency).")
+    def tambah_sisi(self, u, v):
+        """
+        Menambahkan sisi terarah (directed edge) dari simpul u ke v (u -> v).
+        Artinya: Variabel 'u' wajib dihitung terlebih dahulu sebelum rumus 'v' bisa dievaluasi.
+        """
+        self.tambah_simpul(u)
+        self.tambah_simpul(v)
+        if v not in self.adj_list[u]:
+            self.adj_list[u].append(v)
             
-        return topo
-
-# ─── CONTOH PENGUJIAN (BIAR BISA DI RUN) ───
-def test_graph():
-    dag = FormulaDAG()
-    try:
-        # Contoh kasus pada Pertanyaan Analisis 5 [7]
-        # F1 = a + b
-        # F2 = F1 * c
-        # F3 = F2 / F1
-        dag.define("F1", "a + b", [])
-        dag.define("F2", "F1 * c", ["F1"])
-        dag.define("F3", "F2 / F1", ["F1", "F2"])
+    def dapatkan_tetangga(self, v):
+        """Mengembalikan list simbol formula yang bergantung langsung pada simpul v."""
+        return self.adj_list.get(v, [])
         
-        print("Mencoba melakukan Topological Sort...")
-        urutan = dag.topological_sort()
-        print("Urutan Evaluasi yang Valid:", urutan)
-        # Hasil yang diharapkan: ['F1', 'F2', 'F3'] (atau urutan logis lainnya)
+    def semua_simpul(self):
+        """Mengembalikan seluruh daftar simpul formula yang terdaftar di dalam graf."""
+        return list(self.adj_list.keys())
 
-        # Uji Deteksi Siklus
-        print("\nMenambahkan dependensi melingkar: F1 bergantung pada F3...")
-        dag.define("F1", "F3 + 1", ["F3"]) # Membuat siklus F1 -> F2 -> F3 -> F1
-        dag.topological_sort()
+    def memiliki_siklus(self):
+        """
+        Mendeteksi siklus melingkar menggunakan algoritma pewarnaan DFS (Graph Coloring).
+        Status warna:
+        0 = WHITE (Belum diperiksa)
+        1 = GRAY  (Sedang diperiksa di call stack aktif / mendeteksi back-edge)
+        2 = BLACK (Selesai diperiksa dan dinyatakan aman)
+        """
+        status_warna = {v: 0 for v in self.adj_list}
+        
+        def dfs_kunjung(u):
+            status_warna[u] = 1 # Ubah status menjadi GRAY (sedang dikunjungi)
+            
+            for v in self.dapatkan_tetangga(u):
+                # JIKA MENEMUI TETANGGA BERWARNA GRAY = TERBUKTI ADA SIKLUS MELINGKAR!
+                if status_warna.get(v, 0) == 1:
+                    return True
+                # Jika tetangga masih WHITE, telusuri lebih dalam secara rekursif
+                if status_warna.get(v, 0) == 0:
+                    if dfs_kunjung(v):
+                        return True
+                        
+            status_warna[u] = 2 # Ubah status menjadi BLACK (selesai aman)
+            return False
 
-    except ValueError as e:
-        print(f"Error Terdeteksi: {e}")
+        # Melakukan perulangan untuk semua simpul demi mengantisipasi graf yang terputus
+        for simpul in list(self.adj_list.keys()):
+            if status_warna[simpul] == 0:
+                if dfs_kunjung(simpul):
+                    return True
+        return False
 
-if __name__ == "__main__":
-    test_graph()
+    def topological_sort(self):
+        """
+        Mengurutkan rantai eksekusi rumus secara linier berbasis deret antrean (Topological Sort).
+        Menggunakan Algoritma Kahn (In-Degree Elimination) sesuai standar uji asisten praktikum.
+        """
+        if self.memiliki_siklus():
+            raise ValueError("Circular Dependency Detected: Rumus saling melingkar dan memicu deadlock!")
+            
+        # 1. Hitung Nilai In-Degree (jumlah panah masuk) untuk setiap simpul
+        in_degree = {v: 0 for v in self.adj_list}
+        for u in self.adj_list:
+            for v in self.adj_list[u]:
+                in_degree[v] = in_degree.get(v, 0) + 1
+                
+        # 2. Masukkan semua simpul yang tidak punya hambatan masuk (In-Degree == 0) ke antrean
+        queue = [v for v in self.adj_list if in_degree[v] == 0]
+        urutan_topologi = []
+        
+        # 3. Proses eliminasi simpul satu per satu
+        while queue:
+            u = queue.pop(0) # Ambil simpul terdepan
+            urutan_topologi.append(u)
+            
+            # Kurangi beban in-degree dari simpul tetangga yang terhubung
+            for v in self.adj_list.get(u, []):
+                in_degree[v] -= 1
+                # Jika tetangga kini bebas hambatan (in-degree menjadi 0), masukkan ke antrean
+                if in_degree[v] == 0:
+                    queue.append(v)
+                    
+        return urutan_topologi
