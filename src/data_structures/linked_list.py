@@ -1,79 +1,62 @@
-class LLNode:
-    """Kelas ringan untuk menyimpan simpul (node) singly linked list.
-    Referensi: Goodrich dkk. (Code Fragment 7.4).
-    """
-    # Menggunakan __slots__ untuk menghemat memori pada banyak instance node
-    __slots__ = 'data', 'next' 
+from typing import Optional, Any # FIX: Tambahkan Any kapital di sini
 
-    def __init__(self, data=None, next_node=None):
-        self.data = data      # Referensi ke objek pengguna [4]
-        self.next = next_node # Referensi ke node selanjutnya
+class Node:
+    """Simpul tunggal untuk Linked List dengan proteksi objek kosong."""
+    def __init__(self, data: Any, next_node: Optional['Node'] = None): # FIX: any -> Any
+        self.data: Any = data # FIX: any -> Any
+        self.next: Optional['Node'] = next_node
 
 class SinglyLinkedList:
-    """Implementasi murni Singly Linked List dari nol.
-    Wajib digunakan sebagai fondasi Stack dan Queue pada proyek.
-    """
-
+    """Implementasi Singly Linked List sebagai fondasi Stack dan Queue."""
     def __init__(self):
-        """Membuat linked list kosong. Big-O: O(1)."""
-        self._head = None
-        self._size = 0
+        self._head: Optional[Node] = None
+        self._tail: Optional[Node] = None
+        self._size: int = 0
 
-    def __len__(self):
-        """Mengembalikan jumlah elemen dalam list. Big-O: O(1). [3]"""
+    def __len__(self) -> int:
         return self._size
 
-    def is_empty(self):
-        """Mengembalikan True jika list kosong. Big-O: O(1). [3]"""
+    def is_empty(self) -> bool:
         return self._size == 0
 
-    def add_first(self, e):
-        """Menambahkan elemen e ke bagian depan list. Big-O: O(1). [3, 5]"""
-        # Buat node baru, arahkan next ke head lama, lalu update head [6]
-        self._head = LLNode(e, self._head)
+    def add_first(self, data: Any) -> None: # FIX: any -> Any
+        new_node = Node(data, self._head)
+        self._head = new_node
+        if self.is_empty():
+            self._tail = new_node
         self._size += 1
 
-    def remove_first(self):
-        """Menghapus dan mengembalikan elemen pertama (head). Big-O: O(1). [3, 7]"""
+    def add_last(self, data: Any) -> None: # FIX: any -> Any
+        new_node = Node(data)
         if self.is_empty():
-            raise ValueError("List is empty")
-        
-        answer = self._head.data
-        self._head = self._head.next # Geser head ke node selanjutnya [8]
-        self._size -= 1
-        return answer
+            self._head = new_node
+        else:
+            if self._tail is not None:
+                self._tail.next = new_node
+        self._tail = new_node
+        self._size += 1
 
-    def get_first(self):
-        """Melihat elemen pertama tanpa menghapusnya. Big-O: O(1)."""
+    def remove_first(self) -> Any: # FIX: any -> Any
+        """Menghapus dan mengambil data dari barisan depan (Pop/Dequeue)."""
+        if self._head is None:
+            raise IndexError("Linked List kosong, tidak bisa menghapus elemen!")
+        
+        data = self._head.data
+        self._head = self._head.next
+        self._size -= 1
+        
         if self.is_empty():
-            return None
+            self._tail = None
+        return data
+
+    def first(self) -> Any: # FIX: any -> Any
+        """Melihat data di barisan paling depan tanpa menghapusnya (Top/Front)."""
+        if self._head is None:
+            raise IndexError("Linked List kosong, tidak ada elemen terdepan!")
         return self._head.data
 
-    def display(self):
-        """Menampilkan semua elemen list untuk debugging. Big-O: O(n)."""
-        elements = []
-        curr = self._head
-        while curr:
-            elements.append(str(curr.data))
-            curr = curr.next
-        print(" -> ".join(elements) if elements else "Empty List")
-
-# ─── BAGIAN TEST (BIAR BISA LANGSUNG DI RUN) ───
-if __name__ == '__main__':
-    print("=== Menguji Singly Linked List ===")
-    sll = SinglyLinkedList()
-    
-    print(f"Apakah kosong? {sll.is_empty()}") # True
-    
-    print("Menambah 'C', 'B', 'A' di depan...")
-    sll.add_first('C')
-    sll.add_first('B')
-    sll.add_first('A')
-    
-    sll.display() # Output: A -> B -> C
-    print(f"Ukuran list: {len(sll)}") # 3
-    
-    print(f"Hapus elemen pertama: {sll.remove_first()}") # A
-    sll.display() # Output: B -> C
-    
-    print(f"Elemen depan sekarang: {sll.get_first()}") # B
+    def last(self) -> Any: # FIX: any -> Any
+        """Melihat data di barisan paling belakang (Tail)."""
+        if self._tail is None:
+            raise IndexError("Linked List kosong, tidak ada elemen terakhir!")
+        return self._tail.data
