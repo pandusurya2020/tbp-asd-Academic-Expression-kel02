@@ -120,7 +120,7 @@ def main():
             if not line: continue
             
             parts = line.split()
-            cmd = parts.upper() # Ambil elemen string indeks 0 agar tidak AttributeError
+            cmd = parts[0].upper() # Ambil elemen string indeks 0 agar tidak AttributeError
 
             if cmd == "SET" and len(parts) == 3:
                 var, val = parts[9], float(parts[10])

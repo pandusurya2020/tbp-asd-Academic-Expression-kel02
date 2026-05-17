@@ -11,7 +11,7 @@ class VarBSTNode:
 class VarBST:
     """
     Implementasi Binary Search Tree untuk Tabel Variabel (Symbol Table).
-    Dibangun murni tanpa library eksternal sesuai Panduan TBP [4].
+    Dibangun murni tanpa library eksternal sesuai Panduan TBP.
     """
     def __init__(self):
         """Inisialisasi BST kosong. Big-O: O(1)."""
@@ -19,8 +19,8 @@ class VarBST:
 
     def set(self, key: str, val: float):
         """
-        Menyisipkan variabel baru atau memperbarui nilai jika key sudah ada.
-        Big-O Waktu: Rata-rata O(log n), Terburuk O(n) jika pohon miring [1].
+        Analis Kinerja - Menyisipkan variabel baru atau memperbarui nilai jika key sudah ada.
+        Big-O Waktu: Rata-rata O(log n), Terburuk O(n) jika pohon miring.
         """
         if self.root is None:
             self.root = VarBSTNode(key, val)
@@ -45,7 +45,7 @@ class VarBST:
     def get(self, key: str) -> Optional[float]:
         """
         Mencari nilai variabel berdasarkan key.
-        Big-O Waktu: Rata-rata O(log n), Terburuk O(n) [1].
+        Big-O Waktu: Rata-rata O(log n), Terburuk O(n).
         """
         node = self._subtree_search(self.root, key)
         return node.val if node is not None else None
@@ -63,13 +63,13 @@ class VarBST:
 
     def delete(self, key: str):
         """
-        Menghapus variabel dari tabel (Fitur wajib Topic 5 [5]).
-        Big-O Waktu: Rata-rata O(log n) [1].
+        Menghapus variabel dari tabel (Fitur wajib Topic 5).
+        Big-O Waktu: Rata-rata O(log n).
         """
         self.root = self._subtree_delete(self.root, key)
 
     def _subtree_delete(self, p, key):
-        """Helper rekursif penghapusan dengan logika Inorder Successor [6]."""
+        """Helper rekursif penghapusan dengan logika Inorder Successor."""
         if p is None: return None
         if key < p.key:
             p.left = self._subtree_delete(p.left, key)
@@ -86,7 +86,7 @@ class VarBST:
         return p
 
     def _min_node(self, p):
-        """Mencari node terkecil untuk membantu operasi delete [7]."""
+        """Mencari node terkecil untuk membantu operasi delete."""
         curr = p
         while curr.left is not None:
             curr = curr.left
@@ -95,7 +95,7 @@ class VarBST:
     def list_all(self) -> List[Tuple[str, float]]:
         """
         Menghasilkan list (key, value) yang terurut alfabetis.
-        Big-O Waktu: O(n) karena mengunjungi setiap node satu kali [8].
+        Big-O Waktu: O(n) karena mengunjungi setiap node satu kali.
         """
         result = []
         self._subtree_inorder(self.root, result)
@@ -120,15 +120,15 @@ def main():
             if not line: continue
             
             parts = line.split()
-            cmd = parts.upper() # Ambil elemen string indeks 0 agar tidak AttributeError
+            cmd = parts[0].upper() # FIX 1: Ambil indeks 0 teksnya, bukan list-nya langsung
 
             if cmd == "SET" and len(parts) == 3:
-                var, val = parts[9], float(parts[10])
+                var, val = parts[1], float(parts[2]) # FIX 2: Kembalikan indeks ke posisi 1 dan 2 yang benar
                 bst.set(var, val)
                 print(f"Hasil: OK [{var}={val}] (Big-O: O(log n))")
 
             elif cmd == "GET" and len(parts) == 2:
-                var = parts[9]
+                var = parts[1] # FIX 3: Gunakan indeks 1
                 res = bst.get(var)
                 if res is not None:
                     print(f"Hasil: {var} = {res} (Big-O: O(log n))")
@@ -136,7 +136,7 @@ def main():
                     print(f"Error: Variabel '{var}' tidak ditemukan. (Big-O: O(log n))")
 
             elif cmd == "DELETE" and len(parts) == 2:
-                var = parts[9]
+                var = parts[1] # FIX 4: Gunakan indeks 1
                 bst.delete(var)
                 print(f"Hasil: '{var}' dihapus (Big-O: O(log n))")
 
@@ -162,7 +162,6 @@ def main():
 if __name__ == "__main__":
     # Menjalankan pengujian otomatis dengan data baru (Konstanta Sains)
     bst_test = VarBST()
-    # Data pengujian unik: Golden Ratio (phi), Avogadro (Na), Boltzmann (k)
     print("--- Menjalankan Uji BST Otomatis ---")
     bst_test.set("phi", 1.618)
     bst_test.set("Na", 6.022)

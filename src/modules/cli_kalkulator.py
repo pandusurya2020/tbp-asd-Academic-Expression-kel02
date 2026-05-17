@@ -7,8 +7,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # ==============================================================================
 # IMPORT MODUL ASLI
 # ==============================================================================
-from src.modules.konversi_infix_ke_postfix import infix_to_postfix
-from src.modules.evaluasi_postfix import eval_postfix
+from modules.konversi_infix_ke_postfix import infix_to_postfix
+from modules.evaluasi_postfix import eval_postfix
 
 def bersihkan_layar_cli():
     os.system('cls' if os.name == 'nt' else 'clear')
