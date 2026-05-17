@@ -1,76 +1,58 @@
-class Graph:
+import math
+from typing import Optional, Dict, List, Tuple
 
-    def _init_(self):
+class FormulaDAG:
+    def __init__(self):
+        self.adj: Dict[str, List[str]] = {} # formula -> [depends_on]
+        self.formulas: Dict[str, str] = {} # nama -> ekspresi
 
-        # adjacency list
-        self.graph = {}
+    def define(self, nama: str, ekspresi: str, deps: List[str]) -> None:
+        """Tambahkan formula dan dependensinya."""
+        old_deps = self.adj.get(nama)
+        old_expr = self.formulas.get(nama)
 
-    # =========================
-    # Tambah vertex
-    # =========================
-    def add_vertex(self, vertex):
+        self.adj[nama] = deps
+        self.formulas[nama] = ekspresi
 
-        if vertex not in self.graph:
-            self.graph[vertex] = []
+        try:
+            self.topological_sort()  # akan raise jika ada siklus
+        except ValueError:
+            if old_deps is not None:
+                self.adj[nama] = old_deps
+                self.formulas[nama] = old_expr
+            else:
+                del self.adj[nama]
+                del self.formulas[nama]
+            raise
 
-    # =========================
-    # Tambah edge/dependency
-    # =========================
-    def add_edge(self, source, destination):
+    def topological_sort(self) -> List[str]:
+        all_nodes = set(self.adj.keys())
+        for deps in self.adj.values():
+            all_nodes.update(deps)
 
-        self.add_vertex(source)
-        self.add_vertex(destination)
+        indegree = {u: 0 for u in all_nodes}
+        graph: Dict[str, List[str]] = {u: [] for u in all_nodes}
 
-        self.graph[source].append(destination)
+        for formula, deps in self.adj.items():
+            for dep in deps:
+                graph[dep].append(formula)
+                indegree[formula] += 1
 
-    # =========================
-    # Tampilkan graph
-    # =========================
-    def display(self):
-
-        print("=== FORMULA DEPENDENCY GRAPH ===")
-
-        for vertex in self.graph:
-
-            print(f"{vertex} -> {self.graph[vertex]}")
-
-    # =========================
-    # DFS Traversal
-    # =========================
-    def dfs(self, start, visited=None):
-
-        if visited is None:
-            visited = set()
-
-        visited.add(start)
-
-        print(start)
-
-        for neighbor in self.graph[start]:
-
-            if neighbor not in visited:
-                self.dfs(neighbor, visited)
-
-    # =========================
-    # BFS Traversal
-    # =========================
-    def bfs(self, start):
-
-        visited = set()
-        queue = []
-
-        visited.add(start)
-        queue.append(start)
+        queue = [u for u, deg in indegree.items() if deg == 0]
+        result = []
 
         while queue:
-
-            vertex = queue.pop(0)
-
-            print(vertex)
-
-            for neighbor in self.graph[vertex]:
-
-                if neighbor not in visited:
-
-                    visited.add(neighbor)
+            curr = queue.pop(0)
+            result.append(curr)
+            for neighbor in graph[curr]:
+                indegree[neighbor] -= 1
+                if indegree[neighbor] == 0:
                     queue.append(neighbor)
+
+        if len(result) < len(all_nodes):
+            raise ValueError("Siklus ketergantungan terdeteksi")
+    
+
+        return result  
+    
+    
