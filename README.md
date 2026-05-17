@@ -11,7 +11,7 @@ Proyek ini disusun untuk memenuhi Tugas Besar mata kuliah *Struktur Data dan Alg
 | Nama Anggota | NIM | Fokus Komponen / Modul |
 | :--- | :---: | :--- |
 | *Pandu Surya Pratama* | 25051030005| Expression Tree |
-| *Gifara Hanifa Hermawan * | 25051030016| Stack, Konversi Infix ke Postfix, Evaluasi Postfix |
+| *Gifara Hanifa Hermawan* | 25051030016| Stack, Konversi Infix ke Postfix, Evaluasi Postfix |
 | *Ditha Bapra Nugraha Br Payung* | 25051030023| Queue, Graph Dependensi Formula |
 | *Nagita Calya* | 25051030030| Linked List, Evaluasi Postfix |
 | *Dominicus Savio F. W. P.* | 25051030040| BST, Tabel Variabel |
