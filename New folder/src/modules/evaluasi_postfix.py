@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import math
 
 from src.data_structures.stack import Stack
@@ -108,7 +107,7 @@ def evaluate_postfix(tokens, variables=None):
         raise ValueError("Invalid postfix expression")
 
     return final_result
-=======
+
 import sys
 import os
 
@@ -146,4 +145,4 @@ def eval_postfix(postfix_tokens: list, var_bst=None) -> float:
                 eval_stack.push(a ** b)
 
     return eval_stack.pop()
->>>>>>> 8f2e3da00637e0cd1b1817cb2158ef9ca2df4a10
+
