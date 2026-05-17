@@ -1,7 +1,10 @@
-# Graph (adjacency list terbalik: dep -> [formula yang bergantung padanya])
-graph: Dict[str, List[str]] = {u: [] for u in all_nodes}
+# Queue (untuk algoritma Kahn)
+queue = [u for u, deg in indegree.items() if deg == 0]
 
-for formula, deps in self.adj.items():
-    for dep in deps:
-        graph[dep].append(formula)
-        indegree[formula] += 1
+while queue:
+    curr = queue.pop(0)
+    result.append(curr)
+    for neighbor in graph[curr]:
+        indegree[neighbor] -= 1
+        if indegree[neighbor] == 0:
+            queue.append(neighbor)
