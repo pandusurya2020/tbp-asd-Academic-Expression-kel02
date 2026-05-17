@@ -1,17 +1,20 @@
 class QueueLL:
     class _Node:
         """Kelas internal privat untuk merepresentasikan simpul (Node) Linked List."""
-        def _init_(self, element, next_node=None):
+        # FIX: Gunakan double underscore __init__
+        def __init__(self, element, next_node=None):
             self.element = element  # Menyimpan data/token
             self.next = next_node   # Menunjuk ke simpul berikutnya
 
-    def _init_(self):
+    # FIX: Gunakan double underscore __init__
+    def __init__(self):
         """Inisialisasi antrean kosong."""
         self._head = None  # Menunjuk ke elemen terdepan (tempat dequeue)
         self._tail = None  # Menunjuk ke elemen terakhir (tempat enqueue)
         self._size = 0     # Mencatat jumlah elemen dalam antrean
 
-    def _len_(self):
+    # FIX: Gunakan double underscore __len__
+    def __len__(self):
         """Mengembalikan jumlah elemen di dalam antrean."""
         return self._size
 
@@ -21,7 +24,6 @@ class QueueLL:
 
     def first(self):
         """Mengembalikan elemen terdepan tanpa menghapusnya."""
-        # FIX: Cek None langsung pada _head agar Pylance tahu ini aman
         if self._head is None:
             raise IndexError("Queue Underflow: Antrean kosong!")
         return self._head.element
@@ -29,7 +31,6 @@ class QueueLL:
     def enqueue(self, e):
         """Memasukkan elemen baru 'e' ke bagian belakang antrean (Tail)."""
         newest = self._Node(e, None)
-        # FIX: Cek None langsung pada _tail agar Pylance tahu _tail tidak None di bagian else
         if self._tail is None:
             self._head = newest
         else:
@@ -39,7 +40,6 @@ class QueueLL:
 
     def dequeue(self):
         """Mengeluarkan dan mengembalikan elemen terdepan dari antrean (Head)."""
-        # FIX: Cek None langsung pada _head
         if self._head is None:
             raise IndexError("Queue Underflow: Antrean kosong!")
         
