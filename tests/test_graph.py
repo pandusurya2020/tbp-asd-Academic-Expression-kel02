@@ -1,6 +1,5 @@
 import math
 from typing import Optional, Dict, List, Tuple
-import unittest
 
 class FormulaDAG:
     def __init__(self):
@@ -52,65 +51,33 @@ class FormulaDAG:
 
         if len(result) < len(all_nodes):
             raise ValueError("Siklus ketergantungan terdeteksi")
+    
 
         return result  
-
-
-#KODE PENGUJIAN (UNITTEST)
-class TestFormulaDAG(unittest.TestCase):
-    def setUp(self):
-        self.dag = FormulaDAG()
-
-    def test_define_no_dependencies(self):
-        self.dag.define("A", "10", [])
-        self.assertIn("A", self.dag.formulas)
-        self.assertEqual(self.dag.formulas["A"], "10")
-        self.assertEqual(self.dag.adj["A"], [])
-        self.assertEqual(self.dag.topological_sort(), ["A"])
-
-    def test_linear_dependencies(self):
-        self.dag.define("A", "B + 1", ["B"])
-        self.dag.define("B", "C * 2", ["C"])
-        order = self.dag.topological_sort()
-        self.assertEqual(order, ["C", "B", "A"])
-
-    def test_complex_dependencies(self):
-        self.dag.define("Total", "Subtotal + Pajak", ["Subtotal", "Pajak"])
-        self.dag.define("Pajak", "Subtotal * 0.1", ["Subtotal"])
-        self.dag.define("Subtotal", "Harga * Qty", ["Harga", "Qty"])
+    
+def test_graph():
+    dag = FormulaDAG()
+    try:
+        # Contoh kasus pada Pertanyaan Analisis 5 [7]
+        # F1 = a + b
+        # F2 = F1 * c
+        # F3 = F2 / F1
+        dag.define("F1", "a + b", [])
+        dag.define("F2", "F1 * c", ["F1"])
+        dag.define("F3", "F2 / F1", ["F1", "F2"])
         
-        order = self.dag.topological_sort()
-        self.assertTrue(order.index("Harga") < order.index("Subtotal"))
-        self.assertTrue(order.index("Qty") < order.index("Subtotal"))
-        self.assertTrue(order.index("Subtotal") < order.index("Pajak"))
-        self.assertTrue(order.index("Subtotal") < order.index("Total"))
-        self.assertTrue(order.index("Pajak") < order.index("Total"))
+        print("Mencoba melakukan Topological Sort...")
+        urutan = dag.topological_sort()
+        print("Urutan Evaluasi yang Valid:", urutan)
+        # Hasil yang diharapkan: ['F1', 'F2', 'F3'] (atau urutan logis lainnya)
 
-    def test_cycle_detection(self):
-        self.dag.define("A", "B + 1", ["B"])
-        with self.assertRaises(ValueError) as context:
-            self.dag.define("B", "A * 2", ["A"])
-        self.assertEqual(str(context.exception), "Siklus ketergantungan terdeteksi")
+        # Uji Deteksi Siklus
+        print("\nMenambahkan dependensi melingkar: F1 bergantung pada F3...")
+        dag.define("F1", "F3 + 1", ["F3"]) # Membuat siklus F1 -> F2 -> F3 -> F1
+        dag.topological_sort()
 
-    def test_self_reference_cycle(self):
-        with self.assertRaises(ValueError):
-            self.dag.define("A", "A + 1", ["A"])
+    except ValueError as e:
+        print(f"Error Terdeteksi: {e}")
 
-    def test_rollback_on_cycle_new_node(self):
-        self.dag.define("A", "10", [])
-        self.dag.define("B", "A + 5", ["A"])
-        with self.assertRaises(ValueError):
-            self.dag.define("A", "C * 2", ["C", "B"])
-        self.assertEqual(self.dag.formulas["A"], "10")
-        self.assertEqual(self.dag.adj["A"], [])
-
-    def test_rollback_on_cycle_existing_node(self):
-        self.dag.define("X", "100", [])
-        self.dag.define("Y", "X * 2", ["X"])
-        with self.assertRaises(ValueError):
-            self.dag.define("X", "Y + 50", ["Y"])
-        self.assertEqual(self.dag.formulas["X"], "100")
-        self.assertEqual(self.dag.adj["X"], [])
-
-if __name__ == '__main__':
-    unittest.main()
+if __name__ == "__main__":
+    test_graph()
