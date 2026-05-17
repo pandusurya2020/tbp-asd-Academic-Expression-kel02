@@ -17,7 +17,8 @@ class FormulaDAG:
         try:
             self.topological_sort()  # akan raise jika ada siklus
         except ValueError:
-            if old_deps is not None:
+            # FIX: Tambahkan kondisi 'and old_expr is not None' agar Pylance tahu tipenya pasti str
+            if old_deps is not None and old_expr is not None:
                 self.adj[nama] = old_deps
                 self.formulas[nama] = old_expr
             else:
@@ -51,8 +52,5 @@ class FormulaDAG:
 
         if len(result) < len(all_nodes):
             raise ValueError("Siklus ketergantungan terdeteksi")
-    
 
-        return result  
-    
-    
+        return result
