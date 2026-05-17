@@ -1,1 +1,0 @@
-<img src="Screenshot 2026-05-14 151740.jpg" alt="Screenshot 2026-05-14 151740.jpg" width="500">
