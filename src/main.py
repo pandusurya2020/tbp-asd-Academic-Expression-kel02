@@ -1,6 +1,8 @@
 import sys
 import os
 
+from modules.cli_kalkulator import jalankan_kalkulator_cli
+
 # Menambahkan path otomatis agar file bisa di-run dari folder mana saja
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -38,6 +40,7 @@ def main():
     except Exception as e:
         print(f"\nTerjadi kesalahan fatal pada sistem: {e}")
         sys.exit(1)
-
+def main():
+    jalankan_kalkulator_cli()
 if __name__ == "__main__":
-    main()
+    jalankan_kalkulator_cli()
